@@ -2,8 +2,6 @@ package aster;
 
 import javax.swing.JFrame;
 
-import basics.skeleton.ImageBoard;
-
 public class SpaceFrame extends JFrame {
 
 	public SpaceFrame() {
