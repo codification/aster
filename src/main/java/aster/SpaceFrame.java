@@ -21,6 +21,5 @@ public class SpaceFrame extends JFrame {
 	
 	public static void main(String[] args) {
 		SpaceFrame space = new SpaceFrame();
-		
 	}
 }

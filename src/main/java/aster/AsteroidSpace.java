@@ -7,22 +7,33 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Ellipse2D.Double;
 
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class AsteroidSpace extends JPanel implements KeyListener {
 
 	private Shape ship;
 	private AffineTransform transform;
 	private Point shipPosition;
+	private Shape flame;
+	private boolean burning = false;
 	
 	
 
 	public AsteroidSpace() {
 		setBackground(Color.BLACK);
+		shipPosition = new Point(200,200);
+
+		flame = new Ellipse2D.Double(shipPosition.getX() - 10, shipPosition.getY(), 20, 30 );
+
 	}
 
 	@Override
@@ -31,21 +42,28 @@ public class AsteroidSpace extends JPanel implements KeyListener {
 		Graphics2D g2 = (Graphics2D) g;
 
 		setHints(g2);
-
+		
 		
 		if (ship == null) {
-			shipPosition = new Point(200,200);
-			int tipx = 0;
-			int tipy = 0;
+			int centerX = 0;
+			int centerY = 0;
 			int halfWidth = 25;
 			int height = 75;
 			Polygon poly = new Polygon(
-					new int[] { tipx, tipx - halfWidth, tipx, tipx + halfWidth }, 
-					new int[] { tipy - height/2, tipy + height/2, tipy + -height/2 + 2 * height / 3, tipy + height/2 }, 
+					new int[] { centerX, centerX - halfWidth, centerX, centerX + halfWidth }, 
+					new int[] { centerY - height/2, centerY + height/2, centerY - height/2 + 2 * height / 3, centerY + height/2 }, 
 					4);
 			transform = AffineTransform.getTranslateInstance(shipPosition.getX(), shipPosition.getY());
 			ship = transform.createTransformedShape(poly);
 		}
+		
+		// Draw flame
+		if (burning) {
+			g2.setColor(Color.ORANGE);
+			g2.fill(flame);
+			g2.draw(flame);
+		}
+		// Draw the ship
 		g.setColor(Color.GRAY);
 		g2.fill(ship);
 		g2.draw(ship);
@@ -72,8 +90,21 @@ public class AsteroidSpace extends JPanel implements KeyListener {
 			rotateShip(degrees);
 			repaint();
 		}
+		if(arg0.getKeyCode() == KeyEvent.VK_SPACE) {
+			burnBaby();
+			repaint();
+		}
 		
 		
+	}
+
+	private void burnBaby() {
+		burning = true;
+		new Timer(1000, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				burning = false;
+			}
+		}).start();
 	}
 
 	private void rotateShip(int degrees) {
@@ -81,6 +112,7 @@ public class AsteroidSpace extends JPanel implements KeyListener {
 		int anchory = shipPosition.y;
 		AffineTransform rotation = AffineTransform.getRotateInstance(Math.toRadians(degrees), anchorx, anchory);
 		ship = rotation.createTransformedShape(ship);
+		flame = rotation.createTransformedShape(flame);
 	}
 
 	public void keyReleased(KeyEvent arg0) {
