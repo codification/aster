@@ -9,7 +9,7 @@ public class SpaceFrame extends JFrame {
 		add(asteroids);
         setTitle("Space");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(400, 400);
+        setSize(800, 600);
         setLocationRelativeTo(null);
         setVisible(true);
         setResizable(false);
