@@ -17,6 +17,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Ellipse2D.Double;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.Random;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -31,6 +32,7 @@ public class AsteroidSpace extends JPanel implements KeyListener {
 	private boolean blasting;
 	private Shape deathRay;
 	private int shipHeight;
+	private Shape[] stars;
 	
 	
 
@@ -52,6 +54,8 @@ public class AsteroidSpace extends JPanel implements KeyListener {
 		Graphics2D g2 = (Graphics2D) g;
 
 		setHints(g2);		
+		
+		paintStars(g2);
 		
 		if (ship == null) {
 			int centerX = 0;
@@ -83,6 +87,21 @@ public class AsteroidSpace extends JPanel implements KeyListener {
 		g.setColor(Color.GRAY);
 		g2.fill(ship);
 		g2.draw(ship);
+	}
+
+	private void paintStars(Graphics2D g2) {
+		if (stars == null) {
+			stars = new Shape[100];
+			for (int i = 0; i < 100; i++) {
+				stars[i] = new Ellipse2D.Double(Math.random()
+						* getSize().getWidth(), Math.random()
+						* getSize().getHeight(), 1, 1);
+			}
+		}
+		for (int i = 0; i < 100; i++) {
+			g2.setColor(Color.WHITE);
+			g2.draw(stars[i]);
+		}
 	}
 
 	private void setHints(Graphics2D g2) {
