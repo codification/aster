@@ -19,12 +19,14 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.Date;
 import java.util.Random;
+import java.util.Vector;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class AsteroidSpace extends JPanel implements KeyListener, ActionListener {
 
+	private static final java.awt.geom.Point2D.Double ORIGO = new Point2D.Double(0,0);
 	private Shape ship;
 	private AffineTransform transform;
 	private Point2D shipPosition;
@@ -37,9 +39,8 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 	private int shipSpeed;
 	private int rotationDegrees;
 	private Point2D lastShipPosition;
-	private Date lastRepaint;
-	
-	
+	private Date lastRepaint;	
+	private Point2D speedAndDirection;
 
 	public AsteroidSpace() {
 		setBackground(Color.BLACK);
@@ -51,6 +52,7 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 
 		burning = false;
 		blasting = false;
+		lastRepaint = new Date();
 		Timer repaintTimer = new Timer(1000/100, this);
 		repaintTimer.setRepeats(true);
 		repaintTimer.start();
@@ -77,22 +79,19 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 					4);
 			transform = AffineTransform.getTranslateInstance(shipPosition.getX(), shipPosition.getY());
 			ship = transform.createTransformedShape(poly);
+			speedAndDirection = new Point2D.Double(0.0, 0.0);
 		}
 	
-		if (shipSpeed > 0) {
-			// Move ship
-			long sinceLastRepaint = new Date().getTime() - lastRepaint.getTime();
-			long dist = shipSpeed / sinceLastRepaint;
-			Point2D moveTo = new Point2D.Double(shipPosition.getX(), shipPosition.getY() - dist);
-			AffineTransform rotateInstance = AffineTransform.getRotateInstance(Math.toRadians(rotationDegrees), shipPosition.getX(), shipPosition.getY());
-			Point2D newShipPosition = rotateInstance.transform(moveTo, null);
-			AffineTransform translateInstance = AffineTransform.getTranslateInstance(newShipPosition.getX() - shipPosition.getX(), newShipPosition.getY() - shipPosition.getY());
-			
-			flame = translateInstance.createTransformedShape(flame);
-			deathRay = translateInstance.createTransformedShape(deathRay);
-			ship = translateInstance.createTransformedShape(ship);
-			shipPosition = newShipPosition;
-		}
+		// Move ship
+		long sinceLastRepaint = new Date().getTime() - lastRepaint.getTime();
+		double dist = new Point2D.Double().distance(speedAndDirection) / sinceLastRepaint;
+		Point2D moveDistance = AffineTransform.getScaleInstance(dist, dist).deltaTransform(speedAndDirection, null);
+		
+		AffineTransform moveTransform = AffineTransform.getTranslateInstance(moveDistance.getX(), moveDistance.getY());
+		flame = moveTransform.createTransformedShape(flame);
+		deathRay = moveTransform.createTransformedShape(deathRay);
+		ship = moveTransform.createTransformedShape(ship);
+		shipPosition = new Point2D.Double(shipPosition.getX()+moveDistance.getX(), shipPosition.getY()+moveDistance.getY());
 		
 		// Draw flame
 		if (burning) {
@@ -166,6 +165,10 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 
 	private void accelerateShip() {
 		shipSpeed += 10;
+		Point2D speedEffect = new Point2D.Double(0.0,-1.0);
+		speedEffect = AffineTransform.getRotateInstance(Math.toRadians(rotationDegrees)).deltaTransform(speedEffect, null);
+		
+		speedAndDirection = new Point2D.Double(speedAndDirection.getX()+speedEffect.getX(), speedAndDirection.getY()+speedEffect.getY());
 	}
 
 	private void blast() {
