@@ -1,0 +1,4 @@
+# aster
+A sample code project showing off unreliable development practices.
+This code is intended to be shown as a bad example and is probably to be used in workshops or as course material.
+

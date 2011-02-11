@@ -1,6 +1,7 @@
 TODO
     Add asteroids
         - Find some kind of image
+        - ...or draw the asteroids as in the original game
         - Insert and make rotate
     Add collisions
         - when ship collides with an asteroid
