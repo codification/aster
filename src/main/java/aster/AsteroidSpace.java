@@ -166,7 +166,6 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 
 	private void accelerateShip() {
 		shipSpeed += 10;
-		lastShipPosition = shipPosition;
 	}
 
 	private void blast() {
