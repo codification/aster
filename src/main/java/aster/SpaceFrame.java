@@ -1,12 +1,14 @@
 package aster;
 
+import java.awt.event.KeyListener;
+
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class SpaceFrame extends JFrame {
 
-	public SpaceFrame() {
-		AsteroidSpace asteroids = new AsteroidSpace();
-		add(asteroids);
+	public SpaceFrame(JPanel asteroidSpace, KeyListener keyListener) {
+		add(asteroidSpace);
         setTitle("Space");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(800, 600);
@@ -14,10 +16,11 @@ public class SpaceFrame extends JFrame {
         setVisible(true);
         setResizable(false);
         
-        addKeyListener(asteroids);
+        addKeyListener(keyListener);
 	}
 	
 	public static void main(String[] args) {
-		SpaceFrame space = new SpaceFrame();
+		AsteroidSpace asteroidSpace = new AsteroidSpace();
+		SpaceFrame space = new SpaceFrame(asteroidSpace, asteroidSpace);
 	}
 }

@@ -41,6 +41,7 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 	private Point2D lastShipPosition;
 	private Date lastRepaint;	
 	private Point2D speedAndDirection;
+	private Shape asteroid1;
 
 	public AsteroidSpace() {
 		setBackground(Color.BLACK);
@@ -50,12 +51,28 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 		double tipOfShip = shipPosition.getY() - (double) shipHeight/2;
 		deathRay = new Line2D.Double(shipPosition.getX(), tipOfShip, shipPosition.getX(), tipOfShip - 200);
 
+		asteroid1 = createAsteroid1();
+		
 		burning = false;
 		blasting = false;
 		lastRepaint = new Date();
 		Timer repaintTimer = new Timer(1000/100, this);
 		repaintTimer.setRepeats(true);
 		repaintTimer.start();
+	}
+
+	private Shape createAsteroid1() {
+		Point2D[] asteroid1Points = new Point2D[] { new Point2D.Double(209.0, 181.0), new Point2D.Double(219.0, 208.0), new Point2D.Double(246.0, 204.0), new Point2D.Double(257.0, 173.0), new Point2D.Double(221.0, 155.0), new Point2D.Double(227.0, 180.0) };
+		Polygon poly = new Polygon();
+		for (int i = 0; i < asteroid1Points.length; i++) {
+			poly.addPoint(
+					(int) asteroid1Points[i].getX(), 
+					(int) asteroid1Points[i].getY());
+		}
+		double x = poly.getBounds2D().getCenterX();
+		double y = poly.getBounds2D().getCenterX();
+		AffineTransform toOrigo = AffineTransform.getTranslateInstance(-x, -y);
+		return poly;
 	}
 
 	@Override
@@ -82,6 +99,9 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 			speedAndDirection = new Point2D.Double(0.0, 0.0);
 		}
 	
+		g2.draw(asteroid1);
+		g2.fill(asteroid1);
+		
 		// Move ship
 		long sinceLastRepaint = new Date().getTime() - lastRepaint.getTime();
 		double dist = new Point2D.Double().distance(speedAndDirection) / sinceLastRepaint;
