@@ -41,7 +41,7 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 	private Point2D lastShipPosition;
 	private Date lastRepaint;	
 	private Point2D speedAndDirection;
-	private Shape asteroid1;
+	private Shape[] asteroids;
 
 	public AsteroidSpace() {
 		setBackground(Color.BLACK);
@@ -51,7 +51,7 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 		double tipOfShip = shipPosition.getY() - (double) shipHeight/2;
 		deathRay = new Line2D.Double(shipPosition.getX(), tipOfShip, shipPosition.getX(), tipOfShip - 200);
 
-		asteroid1 = createAsteroid1();
+		asteroids = createAsteroids();
 		
 		burning = false;
 		blasting = false;
@@ -61,17 +61,22 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 		repaintTimer.start();
 	}
 
-	private Shape createAsteroid1() {
+	private Shape[] createAsteroids() {
 		Point2D[] asteroid1Points = new Point2D[] { new Point2D.Double(209.0, 181.0), new Point2D.Double(219.0, 208.0), new Point2D.Double(246.0, 204.0), new Point2D.Double(257.0, 173.0), new Point2D.Double(221.0, 155.0), new Point2D.Double(227.0, 180.0) };
+		Point2D[] asteroid2Points = new Point2D[] { new Point2D.Double(202.0, 400.0), new Point2D.Double(256.0, 405.0), new Point2D.Double(248.0, 380.0), new Point2D.Double(225.0, 374.0), new Point2D.Double(221.0, 388.0) }; 
+		return new Shape[] { 
+				asteroidFromPoints(asteroid1Points),
+				asteroidFromPoints(asteroid2Points)
+		};
+	}
+
+	private Polygon asteroidFromPoints(Point2D[] asteroid1Points) {
 		Polygon poly = new Polygon();
 		for (int i = 0; i < asteroid1Points.length; i++) {
 			poly.addPoint(
 					(int) asteroid1Points[i].getX(), 
 					(int) asteroid1Points[i].getY());
 		}
-		double x = poly.getBounds2D().getCenterX();
-		double y = poly.getBounds2D().getCenterX();
-		AffineTransform toOrigo = AffineTransform.getTranslateInstance(-x, -y);
 		return poly;
 	}
 
@@ -98,10 +103,7 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 			ship = transform.createTransformedShape(poly);
 			speedAndDirection = new Point2D.Double(0.0, 0.0);
 		}
-	
-		g2.draw(asteroid1);
-		g2.fill(asteroid1);
-		
+			
 		// Move ship
 		long sinceLastRepaint = new Date().getTime() - lastRepaint.getTime();
 		double dist = new Point2D.Double().distance(speedAndDirection) / sinceLastRepaint;
@@ -131,6 +133,13 @@ public class AsteroidSpace extends JPanel implements KeyListener, ActionListener
 		g2.fill(ship);
 		g2.draw(ship);
 
+		// Draw asteroid
+		for (Shape asteroid : asteroids) {
+			g2.draw(asteroid);
+			g2.fill(asteroid);			
+		}
+
+		
 		lastRepaint = new Date();
 	}
 
