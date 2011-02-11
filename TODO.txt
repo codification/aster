@@ -1,0 +1,12 @@
+TODO
+    Add asteroids
+        - Find some kind of image
+        - Insert and make rotate
+    Add collisions
+        - when ship collides with an asteroid
+        - when asteroids collide?
+    Add blast/explosions ("shooting asteroids")
+        - intersection of "deathray" and asteroids
+        - blasts asteroids into two?
+        - second degree asteroids?
+    
